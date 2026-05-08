@@ -1,0 +1,46 @@
+---
+alwaysApply: true
+---
+
+# Front-end Technical Standards: Inventory & Kardex System
+
+## 1. Project Overview
+Professional inventory management system for AOA. The core mission is maintaining a precise Kardex (stock movement ledger) ensuring data integrity for every product entry and exit.
+
+## 2. Technical Stack
+* **Core:** React.js.
+* **API Layer:** Apollo Client for GraphQL integration.
+* **State Management:** Context API or Redux for user sessions and global state.
+* **Form Handling:** Formik + Yup for schema-based validation.
+* **Styling:** Tailwind CSS (Responsive Design).
+* **Feedback:** React-hot-toast for notifications.
+
+## 3. Critical Business Rules (Non-Negotiable)
+The Cursor agent must enforce these rules in every component:
+
+### A. Kardex Integrity
+* **Stock Traceability:** Every movement record must display the stock balance *before* and *after* the transaction.
+* **Negative Stock Prevention:** The UI must disable "Exit" actions if the requested quantity exceeds the current available stock.
+* **Inventory Valuation:** All calculations for inventory value must use the Weighted Average Price (Precio Promedio Ponderado).
+
+### B. Security & Access Control
+* **JWT Management:** Secure storage of tokens and automatic inclusion in Apollo headers.
+* **Role-Based UI (RBAC):** * **Admin:** Full access to CRUD, user creation, and reports.
+    * **User:** Restricted to viewing stock and registering movements.
+* **Protected Routes:** Implement a wrapper to redirect unauthenticated users to the Login page.
+
+## 4. Required Modules & Features
+
+| Module | Core Requirements |
+| :--- | :--- |
+| **Dashboard** | Metrics cards, movement charts (Recharts), and visual alerts for low stock. |
+| **Product Management** | List with real-time search (debounce), pagination, and full CRUD. |
+| **Kardex Ledger** | Detailed movement history per product with date range filters. |
+| **Movement Registry** | Dynamic forms for entries/exits with product selectors showing live stock. |
+| **Reports** | Inventory valuation, low stock reports, and period-based movement analysis. |
+
+## 5. Senior-Level Implementation Guidelines
+1.  **Optimization:** Use `React.lazy` for route-based splitting and `useMemo` for heavy calculations like inventory value.
+2.  **Error Handling:** All GraphQL mutations must include a `catch` block that triggers a Toast notification with the server error.
+3.  **UI/UX Standards:** * Include loading states (spinners/skeletons) for every async operation.
+    * Implement confirmation modals for critical actions (e.g., confirming an inventory exit).

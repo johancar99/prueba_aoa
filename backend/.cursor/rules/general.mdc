@@ -1,0 +1,45 @@
+---
+alwaysApply: true
+---
+
+# CURSOR RULES: AOA INVENTORY & KARDEX BACKEND (SENIOR ARCHITECT MODE)
+
+## 1. PROJECT CONTEXT (The "What")
+* [cite_start]**Purpose**: Develop a professional Inventory Management and Kardex system for AOA (Administración Operativa Automotriz)[cite: 2, 3, 5].
+* [cite_start]**Core Goal**: Maintain a precise record of product entries and exits with absolute data consistency[cite: 5, 149].
+* **Business Critical Logic**:
+    * [cite_start]**Kardex Accuracy**: Every movement MUST record the product stock value exactly before and exactly after the operation[cite: 19, 71].
+    * [cite_start]**Inventory Valuation**: Implement the Weighted Average Price (Precio Promedio Ponderado) calculation for all movements[cite: 22, 174].
+    * [cite_start]**Strict Constraints**: Zero tolerance for negative stock (no exits allowed if stock is insufficient)[cite: 21, 36].
+    * [cite_start]**Audit**: Every transaction must be linked to a specific user (admin or authorized staff)[cite: 23, 27].
+* [cite_start]**Stack**: Node.js, Express, GraphQL, MongoDB (Mongoose), JWT[cite: 7, 9, 10].
+
+## 2. GENERAL RULES & STANDARDS (The "How")
+
+### Architecture & Modularity
+* [cite_start]**Pattern**: Use a Layered Architecture (TypeDefinitions, Resolvers, Services, Models, Middlewares)[cite: 45, 12, 151].
+* [cite_start]**Code Organization**: Keep logic out of Resolvers; delegate all business rules to the `Services` layer[cite: 45].
+* **TypeScript**: Use strict typing. [cite_start]`any` is strictly forbidden[cite: 132]. [cite_start]Define clear Interfaces for Models and GraphQL Inputs[cite: 132].
+
+### Database & Transactions
+* [cite_start]**Atomic Operations**: Use MongoDB Sessions/Transactions for the recording of movements[cite: 28, 29].
+* [cite_start]**Consistency**: A product's stock update and its corresponding Kardex entry must fail or succeed as a single unit[cite: 29, 30].
+* **Performance**: 
+    * [cite_start]Use composite indexes for frequent searches (e.g., product + date)[cite: 152].
+    * [cite_start]Implement **DataLoaders** to solve the N+1 query problem in GraphQL relations[cite: 155].
+
+### Security & Validations
+* [cite_start]**Authentication**: Implement JWT middleware to protect mutations and sensitive queries[cite: 25, 38].
+* [cite_start]**Authorization**: Check user roles (Admin vs. User) before critical inventory operations[cite: 26, 27].
+* [cite_start]**Data Integrity**: Use **Joi** or **Yup** for input validation before processing GraphQL mutations[cite: 44, 110].
+* [cite_start]**Secrets**: All sensitive data (DB URI, JWT Secret) must reside in a `.env` file[cite: 43].
+* [cite_start]**Passwords**: Use `bcryptjs` for hashing with a high salt round[cite: 154].
+
+### Coding Conventions
+* **Naming**: `camelCase` for variables/functions, `PascalCase` for classes/models, `UPPER_SNAKE_CASE` for constants.
+* [cite_start]**Errors**: Implement a global error handler for GraphQL to return consistent, user-friendly error messages[cite: 40].
+* [cite_start]**Documentation**: Maintain an updated `README.md` with installation steps and example GraphQL queries[cite: 140, 141].
+
+## 3. KEY IMPLEMENTATION SUGGESTIONS
+* [cite_start]**Middleware**: Use `mongoose-middleware` to auto-update the `updatedAt` timestamps[cite: 153].
+* [cite_start]**Scalars**: Use `graphql-scalars` for specialized types like `Date` or `PositiveInt`[cite: 156].
